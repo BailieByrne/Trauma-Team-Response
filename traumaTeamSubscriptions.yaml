@@ -1,0 +1,121 @@
+# Standalone test quickhack. Obtain manually with CET:
+# Game.AddToInventory("Items.TraumaTeamTestProgram", 1)
+
+Ability.TTTraumaSilver:
+  $base: Ability.CodexAbility
+  loc_key_name: l"TT-Silver-Name"
+  loc_key_desc: l"TT-Silver-Description"
+
+Ability.TTTraumaGold:
+  $base: Ability.CodexAbility
+  loc_key_name: l"TT-Gold-Name"
+  loc_key_desc: l"TT-Gold-Description"
+
+Ability.TTTraumaPlatinum:
+  $base: Ability.CodexAbility
+  loc_key_name: l"TT-Platinum-Name"
+  loc_key_desc: l"TT-Platinum-Description"
+
+UIIcon.Ability.TTTraumaSilver:
+  $base: UIIcon.Ability.CanUseFragGrenades
+
+UIIcon.Ability.TTTraumaGold:
+  $base: UIIcon.Ability.CanUseFragGrenades
+
+UIIcon.Ability.TTTraumaPlatinum:
+  $base: UIIcon.Ability.CanUseFragGrenades
+
+BaseStatusEffect.TraumaTeamTest:
+  $base: BaseStatusEffect.Ping
+  packages: []
+  gameplayTags:
+    - Quickhack
+  uiData:
+    $type: StatusEffectUIData_Record
+    displayName: l"TT-Test-Name"
+    iconPath: quickhack_ping
+
+Interactions.TraumaTeamTestHack:
+  $base: Interactions.PingHack
+  name: TraumaTeamTestHack
+  caption: l"TT-Test-Name"
+  description: l"TT-Test-Description"
+
+QuickHack.TraumaTeamTestHack:
+  $base: QuickHack.PingHack
+  actionName: TraumaTeamTest
+  targetActivePrereqs: []
+  objectActionUI: Interactions.TraumaTeamTestHack
+  completionEffects:
+    - $type: ObjectActionEffect_Record
+      statusEffect: BaseStatusEffect.TraumaTeamTest
+      recipient: ObjectActionReference.Target
+
+Items.TraumaTeamTestProgram:
+  $base: Items.PingProgram
+  shardType: TraumaTeamTest
+  displayName: l"TT-Test-Name"
+  localizedDescription: l"TT-Test-Description"
+  objectActions:
+    - QuickHack.TraumaTeamTestHack
+  OnAttach: []
+
+# Targets must advertise the action as well as the deck owning its program.
+# Gameplay and quest combat humans inherit this list.
+Character.Interactable_NPC_Base:
+  objectActions:
+    - !append QuickHack.TraumaTeamTestHack
+
+# All passengers use the native Trauma Team responder record. REDscript
+# commands each one to the patient, while the first is the pickup medic.
+Vehicle.TTTraumaResponseAV:
+  $base: Vehicle.max_tac_av1
+  preventionPassengers:
+    - Character.trauma_rare_officer_chao_ma
+    - Character.trauma_rare_officer_chao_ma
+    - Character.trauma_rare_officer_chao_ma
+  minVehiclePassengersCount: 3
+  maxVehiclePassengersCount: 3
+
+Vehicle.TTTraumaGoldAV:
+  $base: Vehicle.TTTraumaResponseAV
+  preventionPassengers:
+    - Character.trauma_rare_officer_chao_ma
+    - Character.trauma_rare_officer_chao_ma
+  minVehiclePassengersCount: 2
+  maxVehiclePassengersCount: 2
+
+Vehicle.TTTraumaSilverAV:
+  $base: Vehicle.TTTraumaResponseAV
+  preventionPassengers:
+    - Character.trauma_rare_officer_chao_ma
+  minVehiclePassengersCount: 1
+  maxVehiclePassengersCount: 1
+
+# Road fallback uses prevention driving behavior; it brings the same three
+# responders instead of placing a second squad beside the body.
+Vehicle.TTTraumaRoadTruck:
+  $base: Vehicle.v_standard3_militech_hellhound
+  affiliation: Factions.TraumaTeam
+  preventionPassengers:
+    - Character.trauma_rare_officer_chao_ma
+    - Character.trauma_rare_officer_chao_ma
+    - Character.trauma_rare_officer_chao_ma
+  minVehiclePassengersCount: 3
+  maxVehiclePassengersCount: 3
+
+Vehicle.TTTraumaGoldTruck:
+  $base: Vehicle.TTTraumaRoadTruck
+  preventionPassengers:
+    - Character.trauma_rare_officer_chao_ma
+    - Character.trauma_rare_officer_chao_ma
+  minVehiclePassengersCount: 2
+  maxVehiclePassengersCount: 2
+
+Vehicle.TTTraumaSilverTruck:
+  $base: Vehicle.TTTraumaRoadTruck
+  preventionPassengers:
+    - Character.trauma_rare_officer_chao_ma
+  minVehiclePassengersCount: 1
+  maxVehiclePassengersCount: 1
+
