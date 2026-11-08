@@ -18,20 +18,23 @@ public func WEGuaranteedTraumaTier() -> Int32 {
 
 @addMethod(NPCPuppet)
 public func WETraumaChanceByFaction() -> Int32 {
+  let config: ref<TraumaTeamConfig> = GameInstance.GetPreventionSpawnSystem(this.GetGame()).TTGetConfig();
   let affiliation: TweakDBID = this.GetRecord().Affiliation().GetID();
   if affiliation == t"Factions.TraumaTeam" { return 0; };
-  if affiliation == t"Factions.Arasaka" || affiliation == t"Factions.Militech" || affiliation == t"Factions.KangTao" || affiliation == t"Factions.NCPD" || affiliation == t"Factions.Barghest" || affiliation == t"Factions.Biotechnica" || affiliation == t"Factions.NetWatch" || affiliation == t"Factions.Zetatech" || affiliation == t"Factions.CityCouncil" || affiliation == t"Factions.SSI" || affiliation == t"Factions.UnaffiliatedCorpo" { return 30; };
-  if affiliation == t"Factions.AfterlifeMercs" || affiliation == t"Factions.Unaffiliated" { return 12; };
-  if affiliation == t"Factions.Maelstrom" || affiliation == t"Factions.TygerClaws" || affiliation == t"Factions.Valentinos" || affiliation == t"Factions.SixthStreet" || affiliation == t"Factions.VoodooBoys" || affiliation == t"Factions.TheMox" { return 4; };
-  if affiliation == t"Factions.Wraiths" || affiliation == t"Factions.Aldecaldos" { return 1; };
+  if affiliation == t"Factions.Arasaka" || affiliation == t"Factions.Militech" || affiliation == t"Factions.KangTao" || affiliation == t"Factions.NCPD" || affiliation == t"Factions.Barghest" || affiliation == t"Factions.Biotechnica" || affiliation == t"Factions.NetWatch" || affiliation == t"Factions.Zetatech" || affiliation == t"Factions.CityCouncil" || affiliation == t"Factions.SSI" || affiliation == t"Factions.UnaffiliatedCorpo" { return config.corpoChance; };
+  if affiliation == t"Factions.AfterlifeMercs" || affiliation == t"Factions.Unaffiliated" { return config.mercChance; };
+  if affiliation == t"Factions.Maelstrom" || affiliation == t"Factions.TygerClaws" || affiliation == t"Factions.Valentinos" || affiliation == t"Factions.SixthStreet" || affiliation == t"Factions.VoodooBoys" || affiliation == t"Factions.TheMox" { return config.gangChance; };
+  if affiliation == t"Factions.Wraiths" || affiliation == t"Factions.Aldecaldos" { return config.fringeChance; };
   if affiliation == t"Factions.Scavengers" || affiliation == t"Factions.Animals" { return 0; };
-  return 12;
+  return config.mercChance;
 }
 
 // 0 undecided, 1 none, 2 Platinum (including the test hack),
 // 3 Silver, 4 Gold. Keep 2 as Platinum for existing saves.
 @addMethod(NPCPuppet)
 public func WEGetTraumaTier() -> Int32 {
+  let config: ref<TraumaTeamConfig> = GameInstance.GetPreventionSpawnSystem(this.GetGame()).TTGetConfig();
+  if !config.enabled { return 0; };
   if !Equals(this.GetNPCType(), gamedataNPCType.Human) || NPCManager.HasVisualTag(this, n"TraumaTeam") { return 0; };
   let state: ref<ScriptedPuppetPS> = this.GetPuppetPS();
   if !IsDefined(state) { return 0; };
@@ -58,7 +61,7 @@ public func WEGetTraumaTier() -> Int32 {
   let chance: Int32 = this.WETraumaChanceByFaction();
   if RandRange(0, 100) >= chance { state.weTraumaSubscriptionState = 1; return 0; };
   let roll: Int32 = RandRange(0, 100);
-  state.weTraumaSubscriptionState = roll < 60 ? 3 : roll < 90 ? 4 : 2;
+  state.weTraumaSubscriptionState = roll < config.silverWeight ? 3 : roll < config.silverWeight + config.goldWeight ? 4 : 2;
   return this.WEGetTraumaTier();
 }
 

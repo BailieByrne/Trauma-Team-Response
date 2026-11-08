@@ -70,6 +70,8 @@ Character.Interactable_NPC_Base:
 # commands each one to the patient, while the first is the pickup medic.
 Vehicle.TTTraumaResponseAV:
   $base: Vehicle.max_tac_av1
+  # Keep the complete prevention AV entity and its matching appearance.
+  # The prologue Trauma Team scene entity lacks this deployment behavior.
   preventionPassengers:
     - Character.trauma_rare_officer_chao_ma
     - Character.trauma_rare_officer_chao_ma
